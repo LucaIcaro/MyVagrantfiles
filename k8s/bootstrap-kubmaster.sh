@@ -3,9 +3,7 @@
 HOME_VAGRANT="/home/vagrant"
 
 # init of master - in the output file you will find the "kubeadm join" to use
-# the first comand is in case you need the APIserver advertise address
-#kubeadm init --apiserver-advertise-address=10.0.15.10 --pod-network-cidr=10.244.0.0/16 > $HOME/k8sinit.log
-kubeadm init --pod-network-cidr=10.244.0.0/16 > $HOME/k8sinit.log
+kubeadm init --apiserver-advertise-address=192.168.43.10 --pod-network-cidr=10.244.0.0/16 > $HOME/k8sinit.log
 
 su - vagrant -c "mkdir -p $HOME_VAGRANT/.kube"
 su - vagrant -c "sudo cp -i /etc/kubernetes/admin.conf $HOME_VAGRANT/.kube/config"
