@@ -1,0 +1,44 @@
+# -*- mode: ruby -*-
+# vi: set ft=ruby :
+
+N = 2 # number of nodes but the master 
+Vagrant.configure("2") do |config|
+  config.vm.define "kubmaster" do |kubmaster|
+  	kubmaster.vm.box = "centos/7"
+  	name = "kubmaster.vm.local"
+  	kubmaster.vm.hostname = "kubmaster.vm.local"
+
+#  	kubmaster.vm.network "forwarded_port", guest: 80, host: 8888
+
+
+    kubmaster.vm.network "private_network", ip: "192.168.43.10"
+
+    kubmaster.vm.provision :shell, path: "bootstrap-kub.sh"
+    kubmaster.vm.provision :shell, path: "bootstrap-kubmaster.sh"
+
+  	kubmaster.vm.provider "virtualbox" do |vb|
+     		vb.memory = "2048"
+     		vb.cpus = 2
+	end
+ end
+
+  config.vm.box = "centos/7"
+  (1..N).each do |num|
+    name = "kub0#{num}.vm.local"
+
+    config.vm.define name do |machine|
+      machine.vm.hostname = "#{name}"
+      machine.vm.network "private_network", ip: "192.168.43.#{num+10}"
+
+      machine.vm.provision :shell, path: "bootstrap-kub.sh"
+#      machine.vm.provision :shell, path: "bootstrap-kubslave.sh"
+
+      machine.vm.provider :virtualbox do |domain|
+        domain.memory = 1024
+        domain.cpus = 1
+      end
+     end
+  end
+
+end
+
