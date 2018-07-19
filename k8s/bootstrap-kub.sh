@@ -1,5 +1,6 @@
 #!/bin/bash
 
+yum update -y
 # disabling SELinux (for testing purposes)
 setenforce 0
 sed -i --follow-symlinks 's/SELINUX=enforcing/SELINUX=disabled/g' /etc/sysconfig/selinux

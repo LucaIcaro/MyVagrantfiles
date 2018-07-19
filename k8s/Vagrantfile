@@ -19,6 +19,7 @@ Vagrant.configure("2") do |config|
   	kubmaster.vm.provider "virtualbox" do |vb|
      		vb.memory = "2048"
      		vb.cpus = 2
+            # Masters need at least 2 cpus to work correctly https://github.com/kubernetes/kubernetes/issues/38806
 	end
  end
 
