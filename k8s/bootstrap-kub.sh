@@ -1,4 +1,6 @@
 #!/bin/bash
+# dirty 'n quick way to grab the IP of eth1, to avoid k8s standard behaviour of using eth0 as default ip for nodes
+IP_NODE=$(ip a | grep eth1 | grep inet | awk '{ print $2 }' | cut -d "/" -f 1)
 
 yum update -y
 # disabling SELinux (for testing purposes)
@@ -32,6 +34,9 @@ systemctl enable kubelet
 
 # Change the cgroup-driver of k8s to "cgroupfs", the same as docker
 sed -i 's/cgroup-driver=systemd/cgroup-driver=cgroupfs/g' /etc/systemd/system/kubelet.service.d/10-kubeadm.conf
+
+# extra args to force kubectl to use the api on the right port
+sed -i "s|KUBELET_EXTRA_ARGS=|KUBELET_EXTRA_ARGS=--node-ip=$IP_NODE|g" /etc/sysconfig/kubelet
 
 systemctl daemon-reload
 systemctl start docker
