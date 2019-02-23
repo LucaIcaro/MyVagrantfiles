@@ -1,9 +1,41 @@
 # -*- mode: ruby -*-
 # vi: set ft=ruby :
 
+N = 2 # number of nodes but the master 
 Vagrant.configure("2") do |config|
-  config.vm.box = "generic/ubuntu1804"
-   
+  config.vm.define "dockmaster" do |dockmaster|
+  	dockmaster.vm.box = "generic/ubuntu1804"
+  	name = "dockmaster.vm.local"
+  	dockmaster.vm.hostname = "dockmaster.vm.local"
 
-  config.vm.provision "shell", path: "bootstrap.sh"
+#  	dockmaster.vm.network "forwarded_port", guest: 80, host: 8888
+
+
+    dockmaster.vm.network "private_network", ip: "192.168.55.10"
+
+    dockmaster.vm.provision :shell, path: "bootstrap.sh"
+
+  	dockmaster.vm.provider "virtualbox" do |vb|
+     		vb.memory = "2048"
+     		vb.cpus = 2
+	end
+ end
+
+  config.vm.box = "generic/ubuntu1804"
+  (1..N).each do |num|
+    name = "docker0#{num}.vm.local"
+
+    config.vm.define name do |machine|
+      machine.vm.hostname = "#{name}"
+      machine.vm.network "private_network", ip: "192.168.55.#{num+10}"
+
+      machine.vm.provision :shell, path: "bootstrap.sh"
+
+      machine.vm.provider :virtualbox do |domain|
+        domain.memory = 1024
+        domain.cpus = 1
+      end
+     end
+  end
+
 end
