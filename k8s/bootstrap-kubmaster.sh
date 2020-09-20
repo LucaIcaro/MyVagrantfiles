@@ -10,9 +10,9 @@ su - vagrant -c "mkdir -p $HOME_VAGRANT/.kube"
 su - vagrant -c "sudo cp -i /etc/kubernetes/admin.conf $HOME_VAGRANT/.kube/config"
 su - vagrant -c "sudo chown $(id -u vagrant):$(id -g vagrant) $HOME_VAGRANT/.kube/config"
 
-su - vagrant -c "kubectl apply -f https://raw.githubusercontent.com/coreos/flannel/master/Documentation/kube-flannel.yml"
+su - vagrant -c "kubectl apply -f https://docs.projectcalico.org/v3.14/manifests/calico.yaml"
 
 
 ##
 echo "EXECUTE THIS TO OTHER NODES"
-echo $(grep join $HOME/k8sinit.log)
+echo $(grep -A1 join $HOME/k8sinit.log)
